@@ -1,0 +1,17 @@
+Sun Feb 23 10:52:18 PST 2003
+
+Added $SCORE for player score
+Fixed XML escaping bugs
+Fixed repeated rule values from UT2003 servers
+Fixed excessive retries to UT2003 servers that set minplayers
+Fixed reported # players for UT2003 server that set minplayers
+Changed sof2m default protocol to 2004 (SOF 1.02)
+
+Tue Jan  7 16:24:57 PST 2003
+
+Fixed manual compile instructions in COMPILE.txt
+Updated RTCW master protocol from 58 to 60
+Added support for All-Seeing Eye protocol (-eye)
+	[still need to write documentation]
+Fixed rare divide by zero displaying ping time
+Added information about UT2003 master server lists to info/UT2003.txt

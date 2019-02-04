@@ -1,0 +1,99 @@
+April 25, 2004
+version 0.3.5 beta
+- Added FarCry protocol [tombuskens]
+- Added Painkiller protocol [tombuskens]
+- Added Starsiege protocol [contributed by RA Butterbean]
+- Added Savage protocol [contributed by Dave Mednick]
+- Added Breed protocol [tombuskens]
+- Updated Ravenshield protocol [contributed by Ian Cazabat]
+- Small changes for PHP 5 RC1 compatibility [tombuskens]
+- Removed redundant function in class.aux.php [tombuskens]
+- Changed way timeouts occur, highly increases speed [contributed by Martijn Kruiswijk]
+- Fixed unpack() warnings when querying unresponsive servers [contributed by Martijn Kruiswijk]
+- Added timeout parameter to getInfo(), see info.htm for details.
+  This can break compatibility if you're using the 'raw' parameter! [tombuskens]
+
+
+March 14, 2004
+version 0.3.4 beta
+- Added Unreal Tournament 2004 support (same as ut2003) [tombuskens]
+- Added Red Faction protocol [contributed by KevinPriestley]
+- Added Freelancer protocol, but needs more testing [tombuskens]
+- Added Nitro Family support [tombuskens]
+- Fixed wrong player offset with ghost recon [tombuskens]
+- Added 'ping' variable to custom array. Returns average ping per server [tombuskens]
+
+
+
+Januari 28, 2004
+version 0.3.3 beta
+- Added rules string to halflife [tombuskens]
+- Fixed some playersorting issues [tombuskens]
+- Fixed Quakeworld negative scores [tombuskens]
+- Changed stream_set_timeout to socket_set_timeout for PHP 4.2.x compatibility [tombuskens]
+
+
+
+Januari 23, 2004
+version 0.3.2 beta
+
+- GameQ can now read multiple UDP packages per string [disgruntledtech, tombuskens]
+  + Battlefield & Americas Army now return all players
+- GameQ can now be instantiated multiple times, although this should never be neccesary [tombuskens]
+- Added Rogue Spear support [disgruntledtech]
+- Added Rainbow 6 support [disgruntledtech]
+- Added Rise of Nations support [disgruntledtech]
+- Added Homeworld 2 support [disgruntledtech]
+- Added Tony Hawk Pro Skater 3 & 4 support [disgruntledtech]
+- Added some extra checks to playersorting [tombuskens]
+- Moved Quakeworld protocol to separate file [tombuskens]
+
+
+
+December 27, 2003
+version 0.3.1 beta
+
+- Changed license to LGPL
+- Fixed some playersorting issues
+
+
+
+December 26, 2003
+version 0.3.0 beta
+
+- Rewritten base classes, moved some functions to class.aux.php. [tombuskens]
+- Fixed various issues.
+- Updated info file [tombuskens]
+- Integrated player sorting [tombuskens]
+- Added NOLF 1 & 2 support [disgruntledtech]
+- Added Postal 2 support [disgruntledtech]
+- Added Unreal 2 XMP protocol [tombuskens]
+- Added MTA: Vice City protocol [contributed by Serge Y. Zhukov]
+
+
+
+
+November 07, 2003
+version 0.2.4
+
+- Added some extra checks for halflife and ut2003 queries [tombuskens]
+- Added Call of Duty support [disgruntledtech]
+- Added Contract J.A.C.K. support [disgruntledtech]
+- Added GhostRecon protocol [tombuskens]
+- Added Halo support [tombuskens]
+
+
+
+October 08, 2003
+version 0.2.3
+
+- Fixed scores not being parses correctly with some queries [tombuskens]
+
+
+
+September 30, 2003
+version 0.2.2
+
+- Added more games [tombuskens]
+- Rewritten ut2003 protocol [tombuskens]
+- Fixed some minor issues [tombuskens]

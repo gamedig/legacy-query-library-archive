@@ -1,0 +1,90 @@
+## Uncomment if you have gcc
+#CC      = gcc
+#CFLAGS  = -Wall -g -O2
+#LDFLAGS =
+#LDLIBS  =
+
+#CFLAGS += -Dsysconfdir=\"/etc\"
+CFLAGS = -DDEBUG=1 -DENABLE_DUMP=1
+
+## NOTE: if you get errors when linking qstat (missing symbols or
+## libraries), then modify LDFLAGS or LDLIBS
+
+SRC = \
+	utils.c \
+	xform.c \
+	config.c \
+	debug.c \
+	hcache.c \
+	md5.c \
+	qserver.c \
+	qstat.c \
+	template.c \
+	display_json.c \
+	ut2004.c \
+	a2s.c \
+	packet_manip.c \
+	gs3.c \
+	gs2.c \
+	gps.c \
+	ts2.c \
+	doom3.c \
+	tm.c \
+	haze.c \
+	wic.c \
+	ottd.c \
+	fl.c \
+	tee.c \
+	ts3.c \
+	bfbc2.c \
+	ventrilo.c \
+	cube2.c \
+	mumble.c \
+	terraria.c \
+	crysis.c \
+	dirtybomb.c \
+	starmade.c \
+	farmsim.c \
+	ksp.c \
+	tf.c \
+	armyops.c
+
+OBJ = $(SRC:.c=.obj)
+O   = $(SRC:.c=.o)
+
+SOLARIS_LIBS = -lsocket -lnsl
+WINDOWS_LIBS = wsock32.lib
+OS2_LIBS     = so32dll.lib tcp32dll.lib
+EMX_LIBS     = -lsocket
+
+all: qstat
+
+qstat: $(O)
+	$(CC) $(CFLAGS) -o qstat $(O) $(LDFLAGS) $(LDLIBS)
+
+solaris: $(SRC)
+	$(CC) $(CFLAGS) -o qstat $(SRC) $(LDFLAGS) $(LDLIBS) $(SOLARIS_LIBS)
+
+aix sgi freebsd macosx osx openbsd irix linux: qstat
+
+hp hpux: $(SRC)
+	$(CC) $(CFLAGS) -Ae -o qstat $(SRC) $(LDFLAGS) $(LDLIBS)
+
+win32: windows
+
+windows: $(OBJ)
+	$(CC) /Feqstat.exe $(OBJ) $(LDFLAGS) $(LDLIBS) $(WINDOWS_LIBS)
+
+windows_debug: $(SRC)
+	rm -f *.pdb
+	$(CC) $(CFLAGS) /Zi $(SRC) /Feqstat.exe $(WINDOWS_LIBS) /link /fixed:no /incremental:no
+
+os2: $(SRC)
+	$(CC) /Q /W0 /C+ $(SRC)
+	ilink /PM:VIO $(OBJ) /out:qstat.exe $(LDFLAGS) $(LDLIBS) $(OS2_LIBS)
+
+os2emx: $(SRC)
+	$(CC) $(CFLAGS) -o qstat.exe $(SRC) $(LDFLAGS) $(LDLIBS) $(EMX_LIBS)
+
+clean:
+	rm -f qstat core qstat.exe *.pdb $(O) $(OBJ)

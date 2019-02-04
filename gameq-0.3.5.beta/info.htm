@@ -1,0 +1,463 @@
+<html>
+<head>
+<title>GameQ</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+-->
+</style>
+<style type="text/css">
+<!--
+code {
+	color: #0066FF;
+}
+table {
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+	color: #0066FF;
+	border: 1px dashed #333333;
+	background-color: #EEEEEE;
+	padding: 3px;
+	width: 100%;
+}
+-->
+</style>
+</head>
+
+<body>
+<h4>Introduction to GameQ</h4>
+<p>This is a quick introduction on how to use the gameq query class.</p>
+<br/><br/>
+
+
+<h5>Contents</h5>
+<ol>
+  <li><a href="#about">About</a>
+  <li><a href="#setup">Setup</a>
+    <ol>
+      <li><a href="#requirements">Requirements</a></li>
+      <li><a href="#installation">Installation</a></li>
+    </ol>
+  <li><a href="#usage">Using GameQ</a>
+    <ol>
+      <li><a href="#define">Defining servers</a></li>
+      <li><a href="#read">Querying servers</a></li>
+      <li><a href="#read">Reading the data</a></li>
+      <li><a href="#example">Example script</a></li>
+    </ol>
+  </li>
+  <li><a href="#config">The config file</a></li>
+  <li><a href="#add">Adding gametypes</a></li>
+  <li><a href="#supported">Supported games</a></li>
+  <li><a href="#faq">FAQ</a></li>
+</ol>
+<br/><br/>
+
+
+<h5 id="about">1. About</h5>
+<p> Current version: 0.3.5 beta (<a href="changelog.txt">changelog</a>).<br/>
+  GameQ is a class to query one or multiple gameservers, and return the formatted 
+  results in an array. It's designed to be easily expandible and as efficient 
+  as possible.<br/>
+  This class is distributed under the <a href="license">LGPL</a> (GNU Lesser General 
+  Public License).<br/>
+  Feel free to email any remarks, improvements, questions or bugs to <a href=mailto:"tombuskens@users.sourceforge.net">tombuskens@users.sourceforge.net</a>. 
+  Support for new games would be greatly appreciated.<br/>
+  Btw, if you're using the class, let me know!<br/>
+</p>
+<br/><br/>
+
+
+<h5 id="setup">2. Setup</h5>
+
+<h5 id="requirements">2.1. Requirements</h5>
+<p>You'll need <a href="http://www.php.net">PHP</a> 4.2.x or higher for this script to run properly.<br/>
+Also, your host must allow UDP traffic, to communicate with the gameservers.<br/>
+The class does not need any extensions.</p>
+
+<h5 id="installation">2.2. Installation</h5>
+<p>Make sure you have the latest gameq version. Check the <a href="http://sourceforge.net/projects/gameq/">project page</a>
+  or the cvs repository. It's easiest to place all files in the same 
+  directory as the script you want to use it with. However, if you want to place 
+  it in another directory, make sure you change the first two definitions in <em>class.gameq.php</em>:
+</p>
+<table>
+  <tr>
+    <td>define('CFG_FILE', 'class.gameq.cfg.php');<br/>
+      define('INC_PATH', 'inc/');</td>
+  </tr>
+</table>
+<p>to:</p>
+<table>
+  <tr> 
+    <td>define('CFG_FILE', 'path/to/class/class.gameq.cfg.php');<br/>
+      define('INC_PATH', 'path/to/class/inc/');</td>
+  </tr>
+</table>
+<p>I'll assume you've placed the class in the same directory as the script you 
+  want to use it with for the rest of this document. To use gameq in your script, 
+  you'll need to include it:</p>
+<table>
+  <tr>
+    <td><pre>&lt;?PHP
+    require_once('class.gameq.php');
+?&gt;</pre></td>
+  </tr>
+</table>
+<br/>
+<br/>
+<br/>
+
+
+<h5 id="usage">3. Using GameQ</h5>
+
+<h5 id="define">3.1. Defining servers</h5>
+<p>Querying a server is pretty simple. First, you define the server(s) you want 
+  to query. For example, let's say we want to query a quake3 and a battlefield server:</p>
+<table>
+  <tr>
+    <td><pre>&lt;?PHP
+    $servers['quakeserver'] = array('q3', '192.168.0.1', '27962');
+    $servers['a bf server'] = array('bf1942', 'localhost');
+?&gt;</pre></td>
+  </tr>
+</table>
+<p>As you can see, you need to input gametype, server address &amp; server <strong>query</strong> 
+  port. Note that in most cases, the query port is not the same as the game port. 
+  If the server is using the default query port, it can be omitted.</p>
+<h5 id="query">3.2. Querying servers</h5>
+<p>Now that we've defined some servers, we can input them into the script. First, 
+  we have to &quot;create&quot; the class, and then input the server data into 
+  the proper function:</p>
+<table>
+  <tr>
+    <td><pre>&lt;?PHP
+    $query = new GameQ;
+    
+    $data = $query-&gt;getInfo($servers);
+?&gt;</pre></td>
+  </tr>
+</table>
+<p>The getInfo() has two optional parameters, <em>timeout</em> and <em>output type</em>. The first specifies the time (ms)
+  to wait for data returned by the server, the "maximum ping". The second defines the type of output, which defaults to <em>'parsed'</em>,
+  but you can also specify <em>'raw'</em>, which causes the script to return an array with strings as they were returned by the server.</p>
+<table>
+  <tr>
+    <td><pre>&lt;?PHP
+    $query = new GameQ;
+    
+    $data = $query-&gt;getInfo($servers, 500, 'raw');
+?&gt;</pre></td>
+  </tr>
+</table>
+<h5 id="read">3.3. Reading the data</h5>
+<p>Using the first example from 3.2, the data has been returned in a variable called <em>$data</em>. 
+  It will contain something like this:</p>
+<table>
+  <tr>
+    <td><pre>&lt;?PHP
+Array
+(
+    [quakeserver] => Array
+        (
+            [sv_floodProtect] => 1
+            [sv_maxPing] => 0
+            [sv_minPing] => 0
+            [sv_maxRate] => 0
+            [sv_punkbuster] => 1
+            [sv_hostname] => FFA Server
+            [dmflags] => 0
+            [fraglimit] => 20
+            [timelimit] => 0
+            [sv_maxclients] => 8
+            [g_maxGameClients] => 0
+            [capturelimit] => 0
+            [version] => Q3 1.32 win-x86 Oct  7 2002
+            [g_gametype] => 0
+            [protocol] => 68
+            [mapname] => PRO-Q3DM6
+            [sv_privateClients] => 0
+            [sv_allowDownload] => 0
+            [bot_minplayers] => 0
+            [gamename] => baseq3
+            [g_needpass] => 0
+            [players] => Array
+                (
+                    [1] => Array
+                        (
+                            [score] => 7
+                            [ping] => 43
+                            [name] => Doom
+                        )
+
+                    [2] => Array
+                        (
+                            [score] => 0
+                            [ping] => 999
+                            [name] => Angel
+                        )
+
+                    [3] => Array
+                        (
+                            [score] => 3
+                            [ping] => 12
+                            [name] => Daemia
+                        )
+
+                )
+
+            [num_players] => 3
+            [custom] => Array
+                (
+                    [port] => 27962
+                    [id] => q3
+                    [address] => 192.168.0.1
+                    [type] => q3
+                    [name] => Quake 3 Arena
+                )
+
+        )
+
+    [a bf server] => Array
+        (
+            [reservedslots] => 0
+            [roundTime] => -1
+            [tickets2] => 400
+            [tickets1] => 400
+            [averageFPS] => -536870912
+            [mapId] => BF1942
+            [gameId] => BF1942
+            [version] => v1.4
+            [status] => 4
+            [dedicated] => 1
+            [password] => 0
+            [gamemode] => openplaying
+            [maxplayers] => 32
+            [numplayers] => 1
+            [gametype] => conquest
+            [mapname] => GuadalCanal
+            [hostport] => 14567
+            [hostname] => some local server
+            [team_0] => 2
+            [ping_0] => 22
+            [score_0] => 0
+            [deaths_0] => 0
+            [frags_0] => 0
+            [player_0] => sergeant anonymous
+            [team_1] => 1
+            [ping_1] => 54
+            [score_1] => 7
+            [deaths_1] => 2
+            [frags_1] => 1
+            [player_1] => cpt foobar
+            [teamname_1] => allied
+            [teamname_0] => axis
+            [final] => 
+            [queryid] => 4844.1
+            [custom] => Array
+                (
+                    [port] => 23000
+                    [id] => bf1942
+                    [address] => localhost
+                    [type] => spy
+                    [name] => Battlefield 1942
+                )
+
+        )
+
+)
+?&gt;</pre></td>
+  </tr>
+</table>
+<p>As you can see, both servers have returned data. All variables are parsed directly 
+  from the string received by the gameq class.<br/>
+  The GameQ class provides some standard info in <em>$data[&lt;server_id&gt;]['custom']</em>, 
+  like server address and query type.<br/>
+<p> <br/>
+  If one (or more) of the servers did not return any data (the server may be down, 
+  or not responding), an error message will be given in <em>$query-&gt;err_msg</em>. 
+  For example, if the quake 3 server did not respond, <em>$query-&gt;err_msg</em> 
+  would look like this:</p>
+<table>
+  <tr> 
+    <td><pre>&lt;?PHP
+Array
+(
+    [quakeserver] => Server didn't send back any data.
+)?&gt;</pre></td>
+  </tr>
+</table>
+<h5 id="example"><br/>
+  3.4. Example script</h5>
+<p>This is a simple example, which checks if data was recieved, and print out 
+  either the data or the error message.</p>
+<table>
+  <tr> 
+    <td><pre>&lt;?PHP
+    // include the script
+    require_once('class.gameq.php');
+
+    // define the servers
+    $servers['quakeserver'] = array('q3', '192.168.0.1', '27962');
+    $servers['a bf server'] = array('bf1942', 'localhost');
+
+    // initialise class
+    $query = new GameQ;
+
+    // query the servers
+    $data = $query->getInfo($servers);
+
+
+    // go through all servers
+    foreach ($servers AS $server_id => $values){
+
+        // if there are no error messages, print out the data for the server
+        if (!isset($query->err_msg[$server_id])){
+            echo '&lt;strong&gt;Data from &quot;'.$server_id.'&quot;&lt;/strong&gt;&lt;pre&gt;';
+            print_r($data[$server_id]);
+            echo '&lt;/pre&gt;&lt;br&gt;&lt;br&gt;';
+        }
+
+        // if there are error messages, print them
+        else {
+            echo '&lt;strong&gt;something went wrong while querying &quot;'.$server_id.'&quot;:&lt;/strong&gt;&lt;br&gt;'.$query->err_msg[$server_id].'&lt;br&gt;&lt;br&gt;';
+        }
+    }
+?&gt;</pre></td>
+  </tr>
+</table>
+<br/>
+<br/>
+<br/>
+<h5 id="config">4. The config file</h5>
+<p><u>$cfg_type</u><br/>
+  The config file may look confusing, but it's actually pretty simple. Every game 
+  type has its own entry, consisting of:<br/>
+  '&lt;identifier&gt;' =&gt; '&lt;full name&gt;/&lt;default query port&gt;/&lt;query 
+  type&gt;'<br/>
+  <br/>
+  The string that is to be sent to the server is determined by the query type. 
+  If the query type would be &quot;spy&quot;, the string sent to the server would 
+  be in <em>$cfg_string['spy']</em>. To use a different string, just put its name 
+  at the end of the game entry (see battlefield):<br/>
+  '&lt;identifier&gt;' =&gt; '&lt;full name&gt;/&lt;default query port&gt;/&lt;query 
+  type&gt;/&lt;string name&gt;'<br/>
+  <br/>
+  <u>$cfg_string</u><br/>
+  These are strings sent to the server. If more that one string has to be sent, 
+  they are seperated by a forward slash (see halflife and ut2003).
+</p>
+<br/><br/>
+
+
+<h5 id="add">5. Adding gametypes</h5>
+<p>To add a gametype using an existing query protocol, just add a string to <em>$cfg_type</em> 
+  in the config file (see above).<br/>
+  To add a new query type, you'll also have to add one or more strings to <em>$cfg_string</em> 
+  in the config file (see above), and you'll have to create a file called<em> 
+  inc.&lt;query protocol&gt;.php</em> in the <em>inc/</em> directory.<br/>
+  This is the file that will parse the raw data and return it in an array.<br/>
+  <br/>
+  When creating a new <em>inc.&lt;query protocol&gt;.php</em> you'll have to follow 
+  these rules:<br/>
+  The datastrings returned by the server will be in an array called <em>$data</em>, and 
+  any data that you want to output has to be in an array called <em>$output</em> 
+  at the end of the file. It's probably easiest to check out existing inc files 
+  to see how this works exactly.<br/>
+  <br/>
+</p>
+<br/><br/>
+
+<h5 id="supported">6. Supported games</h5>
+<p>GameQ currently supports the following games:</p>
+<ul>
+	<li>America's Army</li>
+	<li>Alien vs Predator 2</li>
+	<li>Breed</li>
+	<li>Battlefield 1942 (also works for BF:Vietnam)</li>
+	<li>Breed</li>
+	<li>Call of Duty</li>
+	<li>Command &amp; Conquer: Renegade</li>
+	<li>Contract J.A.C.K.</li>
+	<li>Daikatana</li>
+	<li>Deus Ex</li>
+	<li>Devastation</li>
+	<li>Drakan: Order of the Flame</li>
+	<li>FarCry</li>
+	<li>Freelancer</li>
+	<li>Ghost Recon</li>
+	<li>Giants: Citizen Kabuto</li>
+	<li>Global Operations</li>
+	<li>Gore</li>
+	<li>Halo: Combat Evolved</li>
+	<li>Halflife</li>
+	<li>Hexen 2</li>
+	<li>Homeworld 2</li>
+	<li>IGI 2</li>
+	<li>Jedi Knight 2: Jedi Outcast</li>
+	<li>Jedi Knight 3: Jedi Academy</li>
+	<li>Kingpin</li>
+	<li>Medal of Honor</li>
+	<li>Multi Theft Auto: Vice City</li>
+	<li>Neverwinter Nights</li>
+	<li>Nitro Family</li>
+	<li>No One Lives Forever</li>
+	<li>No One Lives Forever 2</li>
+	<li>Operation Flashpoint</li>
+	<li>Painkiller</li>
+	<li>Postal 2</li>
+	<li>Quakeworld</li>
+	<li>Quake 2</li>
+	<li>Quake 3 Arena</li>
+	<li>Rainbow Six</li>
+	<li>Ravenshield</li>
+	<li>Red Faction</li>
+	<li>Return to Castle Wolfenstein (+ Enemy Territory)</li>
+	<li>Rise of Nations</li>
+	<li>Rune</li>
+	<li>Savage: Battle for Newerth</li>
+	<li>Shogo: Armored Division</li>
+	<li>SIN</li>
+	<li>Soldier of Fortune</li>
+	<li>Soldier of Fortune 2</li>
+	<li>Serious Sam</li>
+	<li>Serious Sam 2</li>
+	<li>Starsiege</li>
+	<li>Star Trek Voyager: Elite Force</li>
+	<li>Star Trek Voyager: Elite Force 2</li>
+	<li>Tactical Operations</li>
+	<li>Team Factor</li>
+	<li>Tony Hawk Pro Skater 3 & 4</li>
+	<li>Tribes (no playerlisting)</li>
+	<li>Tribes 2</li>
+	<li>Tron 2.0</li>
+	<li>Unreal</li>
+	<li>Unreal 2 XMP</li>
+	<li>Unreal Tournament 2003</li>
+	<li>Unreal Tournament 2004</li>
+	<li>V8 Supercar Challenge</li>
+	<li>Vietcong</li>
+</ul>
+<br/><br/>
+<h5 id="faq">7. FAQ</h5>
+<p>
+	<strong>Q:</strong> I can't get any data from the gameserver, but I'm sure it's online.<br/>
+ 	<strong>A:</strong> Most likely causes: 
+	<ul>
+		<li>Make sure you're querying the right port. Most games have seperate query and game ports.
+		  The default query port is specified in <em>class.gameq.cfg.php</em>.</li>
+		<li>The sockets php uses to communicate are blocked by some hosts. Make sure your host allows UDP traffic for PHP scripts.</li>		
+		
+  <li>The server is simply timing out. Try increasing the timeout parameter. See 
+    <a href="#query">chapter 3.2</a> for details.</li>
+	</ul>
+	<strong>Q:</strong> I've downloaded a new version, but now it's not working anymore!<br/>
+	<strong>A:</strong> Make sure all file permissions are set correctly, and that you've redefined file paths if neccesary (see <a href="#installation">chapter 2.2</a>).<br/>
+</p>
+<br/><br/>
+</body>
+</html>
